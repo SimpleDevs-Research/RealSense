@@ -21,7 +21,7 @@ py -3.7 -m venv realsense
 
 ## Running the application
 
-Example command, which assumes you have a `.bag` file with the filename `depthcolor_15_rgb8-15.bag`.
+Example command, which assumes you have a `.bag` file with the filename `depthcolor_15_rgb8-15.bag`. It's accessible here: [https://www.dropbox.com/scl/fo/ogvg2nla6r1waw49ieu8o/ANL7mDpgVC5rdLKAy1VUnqw?rlkey=eudzjgqvfvclzo01r7uu3o0b5&st=u115camp&dl=0](https://www.dropbox.com/scl/fo/ogvg2nla6r1waw49ieu8o/ANL7mDpgVC5rdLKAy1VUnqw?rlkey=eudzjgqvfvclzo01r7uu3o0b5&st=u115camp&dl=0)
 ```
 python read_depth_and_color.py depthcolor_15_rgb8-15.bag 15 15 -cf rgb8
 ```
