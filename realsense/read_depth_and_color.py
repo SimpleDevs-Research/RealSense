@@ -19,9 +19,13 @@ parser = argparse.ArgumentParser(description="Read recorded bag file and display
                                 Remember to change the stream fps and format to match the recorded.")
 # Add argument which takes path to a bag file as an input
 parser.add_argument("input", type=str, help="local path to the bag file")
+#parser.add_argument("depth_resolution", nargs='2', default=[640, 480], type=int, help="Resolution of the depth video")
+#parser.add_argument("color_resolution", nargs='2', default=[640, 480], type=int, help="Resolution of the color video")
 parser.add_argument("depth_fps", type=int, help="the FPS of the depth video")
 parser.add_argument("color_fps", type=int, help="the FPS of the color video")
 parser.add_argument("-cf", "--color_format", type=str, help="the color mode of the video (Default='bgr8')", default='bgr8', choices={'bgr8', 'rgb8'})
+parser.add_argument("-o", "--output", action='store_true', help="Should we print out a vidoe file?")
+
 # Parse the command line arguments to an object
 args = parser.parse_args()
 # Safety if no parameter have been given
@@ -61,6 +65,16 @@ try:
 
     # Create opencv window to render image in
     cv2.namedWindow("Depth and Color Stream", cv2.WINDOW_AUTOSIZE)
+
+    if args.output:
+        base = os.path.basename(args.input)
+        filename = os.path.splitext(base)[0]
+        output_dir = os.path.dirname(args.input)
+        output_path = os.path.join(output_dir, filename+".mp4")
+        fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+        out = cv2.VideoWriter(output_path, fourcc, 15.0, (640*2,480))
+    else:
+        out = None
     
     # Create colorizer object
     colorizer = rs.colorizer()
@@ -94,10 +108,13 @@ try:
 
         # Render image in opencv window
         cv2.imshow("Depth and Color Stream", images)
+        if out is not None:
+            out.write(images)
         key = cv2.waitKey(1)
         # if pressed escape exit program
         if key == 27:
             cv2.destroyAllWindows()
+            out.release()
             break
 
 finally:
