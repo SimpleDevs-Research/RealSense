@@ -139,7 +139,7 @@ try:
         # Render image in opencv window
         cv2.imshow("Depth and Color Stream", images)
         if out is not None:
-            images = cv2.resize(images, out_res, interpolation = cv2.INTER_LINEAR)
+            images = cv2.resize(images, out_res, interpolation = cv2.INTER_CUBIC)
             out.write(images)
         key = cv2.waitKey(1)
         # if pressed escape exit program
