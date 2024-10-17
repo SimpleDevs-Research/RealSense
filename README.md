@@ -22,6 +22,12 @@ py -3.7 -m venv realsense
 ## Running the application
 
 Example command, which assumes you have a `.bag` file with the filename `depthcolor_15_rgb8-15.bag`. It's accessible here: [https://www.dropbox.com/scl/fo/ogvg2nla6r1waw49ieu8o/ANL7mDpgVC5rdLKAy1VUnqw?rlkey=eudzjgqvfvclzo01r7uu3o0b5&st=u115camp&dl=0](https://www.dropbox.com/scl/fo/ogvg2nla6r1waw49ieu8o/ANL7mDpgVC5rdLKAy1VUnqw?rlkey=eudzjgqvfvclzo01r7uu3o0b5&st=u115camp&dl=0)
-```
+
+```bash
 python read_depth_and_color.py depthcolor_15_rgb8-15.bag 15 15 -cf rgb8
+```
+
+_Reading depth data only from Lidar, saving output file to video with increased resolution:_
+```bash
+python src/read_depth_and_color.py samples_ignore/L515/20241016_175610.bag -d -dr 320 240 -dfps 30 -df z16 -o -or 640 480 -ofps 30
 ```
