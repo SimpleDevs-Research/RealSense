@@ -27,18 +27,58 @@ color_format_map = {
 parser = argparse.ArgumentParser(description="Read recorded bag file and display depth stream in jet colormap.\
                                 Remember to change the stream fps and format to match the recorded.")
 # Add argument which takes path to a bag file as an input
-parser.add_argument("input", type=str, help="The local path to the bag file")
-parser.add_argument('-d', '--depth', action='store_true', help='Process and render the depth data from the input file')
-parser.add_argument('-c', '--color', action='store_true', help='Process and render the color data from the input file')
-parser.add_argument("-dr", "--depth_resolution", nargs=2, default=[640, 480], type=int, help="The resolution of the depth video")
-parser.add_argument("-cr", "--color_resolution", nargs=2, default=[640, 480], type=int, help="The resolution of the color video")
-parser.add_argument("-dfps", "--depth_fps", type=int, default=15, help="The FPS of the depth video")
-parser.add_argument("-cfps", "--color_fps", type=int, default=15, help="The FPS of the color video")
-parser.add_argument("-df", "--depth_format", type=str, default='z16', choices={'z16'}, help="The depth format of the video (default='z16')")
-parser.add_argument("-cf", "--color_format", type=str, default='bgr8', choices={'bgr8', 'rgb8', 'yuyv'}, help="The color mode of the video (default='bgr8')")
-parser.add_argument("-o", "--output", action='store_true', help="Should we print out a vidoe file?")
-parser.add_argument("-or", "--output_resolution", nargs=2, default=[640, 480], type=int, help="The output video resolution. Provide values for the frame size of a single stream (depth or color); images will be resized based on if a single image or both the depth and color are added.")
-parser.add_argument("-ofps", '--output_fps', default=15, type=int, help="The output FPS of the video. Please ensure that this is equivalent to the depth, color, or both.")
+parser.add_argument("input", 
+                    type=str, 
+                    help="The local path to the bag file")
+parser.add_argument('-d', '--depth', 
+                    action='store_true', 
+                    help='Process and render the depth data from the input file')
+parser.add_argument('-c', '--color', 
+                    action='store_true', 
+                    help='Process and render the color data from the input file')
+parser.add_argument("-dr", "--depth_resolution", 
+                    nargs=2, 
+                    default=[640, 480], 
+                    type=int, 
+                    help="The resolution of the depth video")
+parser.add_argument("-cr", "--color_resolution", 
+                    nargs=2, 
+                    default=[640, 480], 
+                    type=int, 
+                    help="The resolution of the color video")
+parser.add_argument("-dfps", "--depth_fps", 
+                    type=int, 
+                    default=15, 
+                    help="The FPS of the depth video")
+parser.add_argument("-cfps", "--color_fps", 
+                    type=int, 
+                    default=15, 
+                    help="The FPS of the color video")
+parser.add_argument("-df", "--depth_format", 
+                    type=str, 
+                    default='z16', 
+                    choices={'z16'}, 
+                    help="The depth format of the video (default='z16')")
+parser.add_argument("-cf", "--color_format", 
+                    type=str, 
+                    default='bgr8', 
+                    choices={'bgr8', 'rgb8', 'yuyv'}, 
+                    help="The color mode of the video (default='bgr8')")
+parser.add_argument("-o", "--output", 
+                    action='store_true', 
+                    help="Should we print out a vidoe file?")
+parser.add_argument("-or", "--output_resolution", 
+                    nargs=2, 
+                    default=[640, 480], 
+                    type=int, 
+                    help="The output video resolution. Provide values for the frame size of a single stream (depth or color); images will be resized based on if a single image or both the depth and color are added.")
+parser.add_argument("-ofps", '--output_fps', 
+                    default=15, 
+                    type=int, 
+                    help="The output FPS of the video. Please ensure that this is equivalent to the depth, color, or both.")
+parser.add_argument("-so", "--show_output",
+                    action='store_true'
+                    help="Should we output the streams into a pythn window for viewing? WILL CAUSE LAG!")
 
 # Parse the command line arguments to an object
 args = parser.parse_args()
@@ -82,7 +122,8 @@ try:
     pipeline.start(config)
 
     # Create opencv window to render image in
-    cv2.namedWindow("Depth and Color Stream", cv2.WINDOW_AUTOSIZE)
+    if args.show_output: 
+        cv2.namedWindow("Depth and Color Stream", cv2.WINDOW_AUTOSIZE)
 
     if args.output:
         base = os.path.basename(args.input)
@@ -137,7 +178,9 @@ try:
             images = color_image
 
         # Render image in opencv window
-        cv2.imshow("Depth and Color Stream", images)
+        if args.show_output:
+            cv2.imshow("Depth and Color Stream", images)
+        # Write an output to the output video if there is an output stream set up
         if out is not None:
             images = cv2.resize(images, out_res, interpolation = cv2.INTER_CUBIC)
             out.write(images)

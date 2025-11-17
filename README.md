@@ -1,5 +1,14 @@
 # RealSenseDepth
 
+## Before you Start: Using Realsense Cameras
+
+This repository expects that you are using an Intel Realsense camera and "Realsense Viewer" to record footage. When you record footage, keep the following in mind:
+
+- Which footage streams you are using (i.e. Depth? RGB?)
+- For each footage stream:
+    - What is the resolution of the data stream? This is a manual setting you need to pay attention to.
+    - (For RBG streams) Are you recording in RGB8 or BGR8?
+
 ## Installation
 
 You must activate a virtual environment with the latest python version of 3.7. If you do not know how to do this, follow these instructions:
