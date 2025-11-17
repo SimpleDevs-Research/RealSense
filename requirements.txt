@@ -1,5 +1,5 @@
-numpy==1.21.0
-Cython==0.27.3
+numpy
+Cython
 pandas
 opencv-python
 pyrealsense2

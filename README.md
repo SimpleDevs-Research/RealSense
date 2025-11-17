@@ -14,10 +14,12 @@ py -3.7 -m venv realsense
 .\Scripts\activate.ps1
 .\Scripts\activate.bat
 ```
-4. Make sure the following packages are installed in this virtual environment:
+4. Make sure the following packages are installed in this virtual environment. These packages are included in `requirements.txxt`, which you can install using `pip install -r requirements.txt`.
     1. `numpy`
-    2. `opencv-python`
-    3. `pyrealsense2`
+    2. `Cython`
+    3. `pandas`
+    4. `opencv-python`
+    5. `pyrealsense2`
 
 ## Running the application
 
