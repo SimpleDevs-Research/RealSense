@@ -7,15 +7,11 @@
 1. [Camera Descriptions](./docs/realsense/about_cameras.md)
 2. [Realsense Viewer - Recording Streams](./docs/realsense/realsense-viewer.md)
 
+### Reading Realsense Data
 
-## Before you Start: Using Realsense Cameras
+1. [Python Environments](./docs/processing/python_environments.md)
+2. []
 
-This repository expects that you are using an Intel Realsense camera and "Realsense Viewer" to record footage. When you record footage, keep the following in mind:
-
-- Which footage streams you are using (i.e. Depth? RGB?)
-- For each footage stream:
-    - What is the resolution of the data stream? This is a manual setting you need to pay attention to.
-    - (For RBG streams) Are you recording in RGB8 or BGR8?
 
 ## Installation
 
