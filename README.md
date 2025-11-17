@@ -1,5 +1,13 @@
 # RealSenseDepth
 
+## Accompanying Guides and Documentation
+
+### Setup and Recording of Realsense Cameras
+
+1. [Camera Descriptions](./docs/realsense/about_cameras.md)
+2. [Realsense Viewer - Recording Streams](./docs/realsense/realsense-viewer.md)
+
+
 ## Before you Start: Using Realsense Cameras
 
 This repository expects that you are using an Intel Realsense camera and "Realsense Viewer" to record footage. When you record footage, keep the following in mind:
