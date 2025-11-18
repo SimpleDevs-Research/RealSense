@@ -64,7 +64,7 @@ _STREAM_TYPES = {
 _STREAM_FORMATS = {
     'format.z16': rs.format.z16,
     'format.rgb8': rs.format.rgb8,
-    'foramt.bgr8': rs.format.bgr8,
+    'format.bgr8': rs.format.bgr8,
     'format.yuyv': rs.format.yuyv
 }
 
