@@ -94,12 +94,15 @@ python src/preview_bag.py <PATH/TO/.bag> <PATH/TO/.json> -rp
 
 <details>
 <summary><strong>Commands:</strong></summary>
+
 You must first run `bag_metadata.py` to output the stream metadata as a JSON file
+
 ```bash
 python src/bag_metadata.py <PATH/TO/.bag> -o
 ```
 
 Then, you can run `generate_videos.py` to preview the bag data itself
+
 ```bash
 # Template Command
 python src/generate_videos_bag.py <PATH/TO/.bag> <PATH/TO/.json> -s <DEPTH> <COLOR> -od <WIDTH> <HEIGHT> <FPS>
@@ -116,6 +119,7 @@ python src/generate_videos.py samples_ignore/capstone/20251116_155458.bag sample
 
 <details>
 <summary><strong>Expected Output:</strong></summary>
+
 - While the script is running, you will see temporary directories created. These temp directories store frames independently as images. There are complicated reasons for this. These temp directories can be memory intensive!
 - When each video is generated, the temp directories will be deleted automatically.
 - The videos generated will be saved in the same directory and filename as the original `.bag` file.
