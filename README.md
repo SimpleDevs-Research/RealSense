@@ -5,7 +5,7 @@
 **Make sure to read these before proceeding further!**
 
 1. [Camera Descriptions](./docs/realsense/about_cameras.md)
-2. [RealSense Viewer - Recording Streams](./docs/realsense/realsense-viewer.md)
+2. [RealSense Viewer - Recording Streams (Optional)](./docs/realsense/realsense-viewer.md)
 3. [Python Environments](./docs/processing/python_environments.md)
 
 
@@ -22,7 +22,7 @@ Run this script to understand what streams were active in a `.bag` file and thei
 </details>
 
 <details>
-<summary><strong>Commands:</strong></summary>
+<summary><strong>How to Use:</strong></summary>
 
 ```bash
 python src/bag_metadata.py <PATH/TO/.bag> -o
@@ -45,6 +45,63 @@ Metadata outputted to `samples_ignore/capstone\20251116_155458.json`
 
 ---
 
+### Recording `.bag` via Python
+
+<details>
+<summary><strong>Related Scripts:</strong></summary>
+
+- **`src/record.py`**
+</details>
+
+<details>
+<summary><strong>How to Use:</strong></summary>
+
+This operation assumes that you are recording with only ONE device.
+
+1. You must have a `.json` file that contains the metadata for the streams you want to record. For example, if you wanted to stream both depth and RGB (as BGR8), then you might have some file like this `example_meta.json`:
+
+    ```json
+    [
+        {
+            "type": "stream.color",
+            "format": "format.bgr8",
+            "width": 1280,
+            "height": 720,
+            "fps": 30
+        },
+        {
+            "type": "stream.depth",
+            "format": "format.z16",
+            "width": 1280,
+            "height": 720,
+            "fps": 30
+        }
+    ]
+    ```
+
+2. Call the following script, which expects your bag file and an output filename
+
+    ```bash
+    python src/record.py <PATH/TO/.json> <PATH/TO/.bag>
+    ```
+
+    So for our `example_meta.json`, we might want to do this, which outputs the recording into `python_recording.bag`:
+
+    ```bash
+    python src/record.py ./example_meta.json ./python_recording.bag
+    ```
+
+</details>
+
+<details>
+<summary><strong>Expected Output:</strong></summary>
+
+If successfully configured, you should see a `.bag` file outputted. You can preview this bag with the next set of instructions below.
+
+</details>
+
+---
+
 ### Previewing `.bag` File
 
 <details>
@@ -55,7 +112,7 @@ Metadata outputted to `samples_ignore/capstone\20251116_155458.json`
 </details>
 
 <details>
-<summary><strong>Commands:</strong></summary>
+<summary><strong>How to Use:</strong></summary>
 
 You must first run `bag_metadata.py` to output the stream metadata as a JSON file
 ```bash
@@ -93,7 +150,7 @@ python src/preview_bag.py <PATH/TO/.bag> <PATH/TO/.json> -rp
 </details>
 
 <details>
-<summary><strong>Commands:</strong></summary>
+<summary><strong>How to Use:</strong></summary>
 
 You must first run `bag_metadata.py` to output the stream metadata as a JSON file
 
