@@ -105,16 +105,16 @@ Then, you can run `generate_videos.py` to preview the bag data itself
 
 ```bash
 # Template Command
-python src/generate_videos_bag.py <PATH/TO/.bag> <PATH/TO/.json> -s <DEPTH> <COLOR> -od <WIDTH> <HEIGHT> <FPS>
+python src/generate_videos_bag.py <PATH/TO/.bag> <PATH/TO/.json> -s <DEPTH> <COLOR> -od <WIDTH> <HEIGHT>
 
 # Example Command:
-python src/generate_videos.py samples_ignore/capstone/20251116_155458.bag samples_ignore/capstone/20251116_155458.json -od 640 480 15
+python src/generate_videos.py samples_ignore/capstone/20251116_155458.bag samples_ignore/capstone/20251116_155458.json -od 640 480
 ```
 
 - `<PATH/TO/.bag>`: A local path to the `.bag` data you want to read.
 - `<PATH/TO/.json>`: A local path to the `json` data that contains meta info about your `.bag` file
 - `-s`: Which data streams should we output? Expects two separate outputs (e.g. `... -s depth width ...`). You can isolate the streams to just `depth` or `color` if you want.
-- `-od`: The output dimensions of each video generated. Expects three separate integer values. These are applied to both depth and color videos, if both are requested.
+- `-od`: The output dimensions of each video generated. Expects two separate integer values: `width` (in pixels), and `height` (in pixels). These are applied to both depth and color videos, if both are requested.
 </details>
 
 <details>

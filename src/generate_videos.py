@@ -31,10 +31,10 @@ parser.add_argument('-s', '--streams',
                     default=['depth', 'color'],
                     help="Explicitly define which streams to output as videos")
 parser.add_argument('-od', '--output_dims',
-                    nargs=3,
+                    nargs=2,
                     type=int,
-                    default=[640, 480, 15],
-                    help='The dimension (width, height, fps) of the expected output videos')
+                    default=[640, 480],
+                    help='The dimensions (width, height) of the expected output videos')
 args = parser.parse_args()
 
 # Check if provided files actually exist
@@ -90,7 +90,7 @@ with open(args.input_metadata, "r") as f:
 assert len(streams) > 0, "No streams are set for being outputted... Modify your command line arguments to fix this, specifically `-s` or `--streams`"
 
 # Initialize Frame Aligner, for aligning frames. We force the frames to align to the RGB component if it exists; otherwise, use the first stream in `streams`
-align_to = rs.stream.color if color_exists else next(iter(streams.values()))['rs.type']
+align_to = rs.stream.color if color_exists else rs.stream.depth
 frame_aligner = rs.align(align_to)
 
 # Initialize a colorizer to visualize the depth color
@@ -124,17 +124,19 @@ while True:
             color_frame = frame_colorizer.colorize(_frame)
             _image = np.asanyarray(color_frame.get_data())
             _frame_number = _frame.get_frame_number()
+            _frame_timestamp = _frame.get_timestamp()   # milliseconds
         elif stream_type == 'stream.color': 
             _frame = aligned_frames.get_color_frame()
             _image = np.asanyarray(_frame.get_data())
             _frame_number = _frame.get_frame_number()
+            _frame_timestamp = _frame.get_timestamp()   # milliseconds
 
-        # Resize the iamge to fit the output dimensions
+        # Resize the image to fit the output dimensions
         resized_img = cv2.resize(_image, (args.output_dims[0], args.output_dims[1]), interpolation=cv2.INTER_AREA)
 
         # Save and Cache
         out_filename = os.path.join(stream['temp_dir'], f'{_frame_number}.png')
-        streams[stream_type]['frames_cache'].append([_frame_number, out_filename])
+        streams[stream_type]['frames_cache'].append([_frame_number, _frame_timestamp, out_filename])
         cv2.imwrite(out_filename, resized_img)
            
     # Make sure to add a quitter operation for early exits
@@ -155,29 +157,44 @@ filename = os.path.basename(filename_root)
 # Now, with each frame cache saved, let's sort each and then print them as actual videos
 print("Generating videos...")
 for stream_type in streams:
-    # Get the stream info and the cache; sort that frame cache based on frame number
+    # Get the stream info and the cache; sort that frame cache based on frame timestamp
     stream = streams[stream_type]
-    s_frames_cache = sorted(stream['frames_cache'], key=lambda x: x[0])
+    s_frames_cache = sorted(stream['frames_cache'], key=lambda x: x[1])
     temp_dir = stream['temp_dir']
 
     # Generate an output video filename
     output_filename = os.path.join(dirname, filename+"_"+stream_type.split(".")[1]+".mp4")
 
-    # Generate a video writer
+    # Generate a video writer. We rely on the same FPS as the original stream
     video_writer = cv2.VideoWriter(
         output_filename, 
         cv2.VideoWriter_fourcc(*'MP4V'), 
-        args.output_dims[2], 
+        stream['fps'], 
         [args.output_dims[0], args.output_dims[1]]
     )
 
     # Iterate through sorted frames
+    prev_ts = None
+    frame_time = 1000 / stream['fps']
     for frame in s_frames_cache:
-        img = cv2.imread(frame[1])
+        img = cv2.imread(frame[2])
         if img is None:
             print(f"ERROR: Couldn't read image {frame[0]}")
             continue
-        video_writer.write(img)
+        # if there's no previous timestamp, then we just add the image itself and set `prev_ts`
+        if prev_ts is None:
+            video_writer.write(img)
+            prev_ts = frame[1]
+            continue;
+
+        # Calcualte delta time
+        dt = frame[1] - prev_ts
+        prev_ts = frame[1]
+
+        # Consecutively add frames until the next active frame
+        frames_to_write = max(1, round(dt / frame_time))
+        for _ in range(frames_to_write):
+            video_writer.write(img)
 
     # Release writer
     video_writer.release()
