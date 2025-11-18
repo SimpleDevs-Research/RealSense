@@ -2,47 +2,121 @@
 
 ## Accompanying Guides and Documentation
 
-### Setup and Recording of Realsense Cameras
+**Make sure to read these before proceeding further!**
 
 1. [Camera Descriptions](./docs/realsense/about_cameras.md)
-2. [Realsense Viewer - Recording Streams](./docs/realsense/realsense-viewer.md)
-
-### Reading Realsense Data
-
-1. [Python Environments](./docs/processing/python_environments.md)
-2. []
+2. [RealSense Viewer - Recording Streams](./docs/realsense/realsense-viewer.md)
+3. [Python Environments](./docs/processing/python_environments.md)
 
 
-## Installation
+## Core Scripts
 
-You must activate a virtual environment with the latest python version of 3.7. If you do not know how to do this, follow these instructions:
+### Reading `.bag` Metadata
 
-1. Make sure python 3.7 is installed on your machine. The easiest way to commonly do this is to use `py -0`, which lists all python installs on your local device. You can download the latest installer (3.7.9) on python's downloads page: [https://www.python.org/downloads/release/python-379/](https://www.python.org/downloads/release/python-379/)
-2. Create a virtual environment with the following command, which creates a new virtual environment inside a folder named `realsense`. Unsure if it auto-creates the folder for you or not. If an error occurs, simply make an empty directory with the same name, then execute.
-```
-py -3.7 -m venv realsense
-```
-3. `cd` into `realsense/`, then activate the virtual environment. If you developed this on a Mac, the command will be different - make sure to look it up.
-```
-.\Scripts\activate.ps1
-.\Scripts\activate.bat
-```
-4. Make sure the following packages are installed in this virtual environment. These packages are included in `requirements.txxt`, which you can install using `pip install -r requirements.txt`.
-    1. `numpy`
-    2. `Cython`
-    3. `pandas`
-    4. `opencv-python`
-    5. `pyrealsense2`
+Run this script to understand what streams were active in a `.bag` file and their parameters.
 
-## Running the application
+<details>
+<summary><strong>Related Scripts:</strong></summary>
 
-Example command, which assumes you have a `.bag` file with the filename `depthcolor_15_rgb8-15.bag`. It's accessible here: [https://www.dropbox.com/scl/fo/ogvg2nla6r1waw49ieu8o/ANL7mDpgVC5rdLKAy1VUnqw?rlkey=eudzjgqvfvclzo01r7uu3o0b5&st=u115camp&dl=0](https://www.dropbox.com/scl/fo/ogvg2nla6r1waw49ieu8o/ANL7mDpgVC5rdLKAy1VUnqw?rlkey=eudzjgqvfvclzo01r7uu3o0b5&st=u115camp&dl=0)
+- **`src/bag_metadata.py`**
+</details>
+
+<details>
+<summary><strong>Commands:</strong></summary>
 
 ```bash
-python read_depth_and_color.py depthcolor_15_rgb8-15.bag 15 15 -cf rgb8
+python src/bag_metadata.py <PATH/TO/.bag> -o
 ```
 
-_Reading depth data only from Lidar, saving output file to video with increased resolution:_
-```bash
-python src/read_depth_and_color.py samples_ignore/L515/20241016_175610.bag -d -dr 320 240 -dfps 30 -df z16 -o -or 640 480 -ofps 30
+- `<PATH/TO/.bag>`: A local path to the `.bag` data you want to read.
+- `-o`: Output the metadata as a JSON file, with the same filename and same location as the provided `.bag` file.
+</details>
+
+<details>
+<summary><strong>Example Output:</strong></summary>
+
 ```
+Streams found:
+- TYPE: stream.depth             RES: 1280x720 @ 30 FPS          FORMAT: format.z16
+- TYPE: stream.color             RES: 1280x720 @ 30 FPS          FORMAT: format.rgb8
+Metadata outputted to `samples_ignore/capstone\20251116_155458.json`
+```
+</details>
+
+---
+
+### Previewing `.bag` File
+
+<details>
+<summary><strong>Related Scripts:</strong></summary>
+
+- **`src/bag_metadata.py`**
+- **`src/preview_bag.py`**
+</details>
+
+<details>
+<summary><strong>Commands:</strong></summary>
+
+You must first run `bag_metadata.py` to output the stream metadata as a JSON file
+```bash
+python src/bag_metadata.py <PATH/TO/.bag> -o
+```
+
+Then, you can run `preview_bag.py` to preview the bag data itself
+```bash
+python src/preview_bag.py <PATH/TO/.bag> <PATH/TO/.json> -rp
+```
+
+- `<PATH/TO/.bag>`: A local path to the `.bag` data you want to read.
+- `<PATH/TO/.json>`: A local path to the `json` data that contains meta info about your `.bag` file
+- `-rp`: When previewing the bag data, do you want the streams to repeat in a loop?
+</details>
+
+<details>
+<summary><strong>Expected Output:</strong></summary>
+
+- You will see an OpenCV window pop up showing the frames. The frames are aligned in script. 
+- However, this doesn't mean that you'll see ALL frames, as the stream may skip frames sometimes. 
+- You can close the window by pressing the "Escape" key on your keyboard while the preview window is selected.
+- This script does NOT produce a video for you. For that, look at the next script
+</details>
+
+---
+
+### Generating Videos
+
+<details>
+<summary><strong>Related Scripts:</strong></summary>
+
+- **`src/bag_metadata.py`**
+- **`src/generate_videos.py`**
+</details>
+
+<details>
+<summary><strong>Commands:</strong></summary>
+You must first run `bag_metadata.py` to output the stream metadata as a JSON file
+```bash
+python src/bag_metadata.py <PATH/TO/.bag> -o
+```
+
+Then, you can run `generate_videos.py` to preview the bag data itself
+```bash
+# Template Command
+python src/generate_videos_bag.py <PATH/TO/.bag> <PATH/TO/.json> -s <DEPTH> <COLOR> -od <WIDTH> <HEIGHT> <FPS>
+
+# Example Command:
+python src/generate_videos.py samples_ignore/capstone/20251116_155458.bag samples_ignore/capstone/20251116_155458.json -od 640 480 15
+```
+
+- `<PATH/TO/.bag>`: A local path to the `.bag` data you want to read.
+- `<PATH/TO/.json>`: A local path to the `json` data that contains meta info about your `.bag` file
+- `-s`: Which data streams should we output? Expects two separate outputs (e.g. `... -s depth width ...`). You can isolate the streams to just `depth` or `color` if you want.
+- `-od`: The output dimensions of each video generated. Expects three separate integer values. These are applied to both depth and color videos, if both are requested.
+</details>
+
+<details>
+<summary><strong>Expected Output:</strong></summary>
+- While the script is running, you will see temporary directories created. These temp directories store frames independently as images. There are complicated reasons for this. These temp directories can be memory intensive!
+- When each video is generated, the temp directories will be deleted automatically.
+- The videos generated will be saved in the same directory and filename as the original `.bag` file.
+</details>

@@ -20,6 +20,13 @@ If you don't have Python3.7 installed, the easiest and hassle-free way to do thi
 <summary><strong>Macintosh OS X</strong></summary>
 
 There are different strategies available to you. The easiest way from my experience is to use <a href="https://brew.sh/" target="_blank">**Homebrew**</a> and <a href="https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv" target="_blank">**pyenv**</a>.
+
+At that point, once you have **pyenv** installed, you can then install Python3.7 using the following command:
+
+```bash
+pyenv install 3.7
+```
+
 </details>
 
 ## Step 2: Setting Up a Virtual Environment
@@ -28,38 +35,49 @@ We want to set up a Python3.7 virtual environment, such that we can isolate all 
 
 > Make sure to change your working directory to the folder where you will be working off of. If you cloned this repository, then you'll want to change the working directory to this repository's folder on your local drive.
 
-Assuming you installed Python3.7, you should have access to the `python3` command. To create a python environment, follow this general structure:
-
-```bash
-python3 -m venv <NAME OF ENVIRONMENT>
-```
-
-For example, let's say we want to create a virtual environment called `realsense_env`. The command to create this environment is:
-
-```bash
-python3 -m venv realsense_env
-```
-
-if successful, you should see a new folder in your current directory with the same name as your environment.
-
-## Step 3: Activating (and Deactivating) the Python Environment
-
-The commands to activate your new Python environment differ between Windows PC and OS X. These examples assume you created a `realsense_env` virtual environment, like in the example in the previous step.
-
 <details>
 <summary><strong>Windows PC</strong></summary>
 
+This assumes that you've installed Python3.7 using an official Python installer. The commands to create and run a Python3.7 environment are the following:
+
 ```bash
+# Create your virtual environment; creates a folder with the same name
+py -3.7 -m venv <NAME OF ENVIRONMENT>
+
+# Run the environment itself
+<NAME OF ENVIRONMENT>/Scripts/activate.ps1
+```
+
+For example, let's say we want to create and run a virtual environment called `realsense_env`. The commands will look like this:
+
+```bash
+py -3.7 -m venv realsense_env
 realsense_env/Scripts/activate.ps1
 ```
 
 </details>
 
 <details>
-<summary><strong>Macintosh OS X</strong></summary>
+<summary><strong>Mac OS x</strong></summary>
+
+We're going with the assumption you used **Homebrew** and **pyenv** to install Python3.7. From that, we need to install an additional package via Homebrew: **pyenv-virtualenv**.
 
 ```bash
-source realsense_env/bin/activate
+brew install pyenv-virtualenv
+```
+
+After that, you can create and run a new virtual environment using Python3.7 using the following commands:
+
+```bash
+pyenv virtualenv 3.7 <NAME OF ENVIRONMENT>
+pyenv activate <NAME OF ENVIRONMENT>
+```
+
+For example, if we wanted to create a virtual environment called `realsense_env`, then we'd run the following commands:
+
+```bash
+pyenv virtualenv 3.7 realsense_env
+pyenv activate realsense_env
 ```
 
 </details>
@@ -75,10 +93,13 @@ deactivate
 
 </details>
 
-## Step 4: Installing Dependencies
+## Step 3: Installing Dependencies
 
-While your Python environment is running, you need to install the necessary Python packages. The required packages are mentioned in `requirements.txt`, but for simplicity you can import them all using this simple command:
+While your Python environment is running, you need to install the necessary Python packages. The required packages are mentioned in two separate files: `requirements_windows.txt` for Windows, and `requirements_mac.txt` for Mac OS X. We need two separate versions because one of the packages, <a href="https://pypi.org/project/pyrealsense2/" target="_blank">`pyrealsense2`</a>, only works on Windows PC. There is a Mac OS X equivalent: <a href="https://pypi.org/project/pyrealsense2-mac/" target="_blank">`pyrealsense2-mac`</a>.
+
+Depending on whichever OS you are using, here's a one-liner command you can use:
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements_windows.txt # For Windows PCs
+pip install -r requirements_mac.txt     # For Mac OS X
 ```
