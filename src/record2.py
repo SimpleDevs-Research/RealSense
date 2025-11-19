@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import os
 import time
+from datetime import datetime
 import json
 import queue
 import threading
@@ -98,10 +99,18 @@ def preview_loop():
 # = RECORDING THREAD = #
 # ==================== #
 
-def record_with_preview(metadata_path, output_path, enable_preview):
+def record_with_preview(metadata_path, output_dir, enable_preview):
 
     # Access the global frame
     global latest_frame
+
+    # Create the output directory
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Form the output_path from metadata filename and current timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_filename = f"{timestamp}.bag"
+    output_path = os.path.join(args.output_dir, output_filename)
 
     # Initialize realsense pipeline
     pipeline = rs.pipeline()
@@ -192,9 +201,9 @@ if __name__ == "__main__":
     parser.add_argument("input_metadata", 
                         type=str, 
                         help="The .json file to read")
-    parser.add_argument("output_bag", 
+    parser.add_argument("output_dir", 
                         type=str, 
-                        help="The output filename of the .bag file")
+                        help="The directory where the output bag is saved inside")
     parser.add_argument("-p", "--preview",
                         action="store_true",
                         help="Enable live OpenCV preview window")
@@ -205,7 +214,7 @@ if __name__ == "__main__":
     assert os.path.exists(args.input_metadata), "Metadata file does not exists!"
 
     # Make the cal
-    record_with_preview(args.input_metadata, args.output_bag, args.preview)
+    record_with_preview(args.input_metadata, args.output_dir, args.preview)
 
 
 
