@@ -1,12 +1,7 @@
 import argparse
 import os
 import json
-import platform
-system = platform.system()
-if system == "Darwin": # Mac OSX
-    import pyrealsense2_mac as rs
-else:
-    import pyrealsense2 as rs
+import pyrealsense2 as rs
 
 parser = argparse.ArgumentParser(
     description="Read a `.bag` file to interpret its metadata. \

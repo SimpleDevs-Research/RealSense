@@ -7,12 +7,7 @@ from random import choice
 from string import ascii_uppercase
 import shutil
 import gc
-import platform
-system = platform.system()
-if system == "Darwin": # Mac OSX
-    import pyrealsense2_mac as rs
-else:
-    import pyrealsense2 as rs
+import pyrealsense2 as rs
 
 # Parse arguments
 parser = argparse.ArgumentParser(

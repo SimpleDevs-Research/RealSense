@@ -1,14 +1,6 @@
 import argparse
-import numpy as np
-import cv2
-import os
 import json
-import platform
-system = platform.system()
-if system == "Darwin": # Mac OSX
-    import pyrealsense2_mac as rs
-else:
-    import pyrealsense2 as rs
+import pyrealsense2 as rs
 
 # Parse arguments
 parser = argparse.ArgumentParser(
