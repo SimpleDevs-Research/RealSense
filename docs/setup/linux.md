@@ -44,3 +44,52 @@ sudo apt install git cmake libssl-dev libusb-1.0-0-dev pkg-config udev -y
     ```
 4. Close all bash terminals and reopen. This causes the bash environment to recognize commands such as `pyenv`.
 </details>
+
+<details>
+<summary><strong>Installing Python 3.8:</strong></summary>
+
+```bash
+pyenv install 3.8   # Install
+pyenv versions      # Confirm
+```
+</details>
+
+<details>
+<summary><strong>Switching to Python 3.8 in the current Shell:</strong></summary>
+
+```bash
+pyenv shell 3.8.16
+python3 --version
+```
+</details>
+
+## Step 2: Installing Librealsense v2.50.0
+
+In the Windows and OSX installation guides, we merely installed `pyrealsense2` or `pyrealsense2-macosx` via `pip`. However, that's not going to work on Linux. This is due to USB permissions. I've had a lot of difficulty trying to get our RealSense cameras to get detected by the `pip`-installed versions of `pyrealsense2` on Linux. 
+
+The alternative therefore is to literally _build_ `pyrealsense2` from the <a href="https://github.com/IntelRealSense/librealsense/releases/tag/v2.50.0" target="_blank">v2.50.0 release of the `librealsense` SDK</a>. So make sure to follow these instructions **VERY CAREFULLY**.
+
+<details>
+<summary><strong>Clone / Download the original source of `librealsense` v2.50.0</strong></summary>
+
+1. This is just as simple as downloading the source code `.zip` from <a href="https://github.com/IntelRealSense/librealsense/releases/tag/v2.50.0" target="_blank">the release page</a>.
+2. Place it in a location that's easy to access - e.g. the Desktop.
+</details>
+
+<details>
+<summary><strong>Building `librealsense`</strong></summary>
+
+1. Change the working directory to the newly-downloaded `librealsense-2.50.0` folder:
+
+    ```bash
+    cd [PATH/TO/]librealsense-2.50.0
+    ```
+2. Prep building using `cmake`
+
+    ```bash
+    mkdir build && cd build
+    
+    ```
+
+
+</details>
