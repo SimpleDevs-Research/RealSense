@@ -6,7 +6,11 @@
 
 1. [Camera Descriptions](./docs/realsense/about_cameras.md)
 2. [RealSense Viewer - Recording Streams (Optional)](./docs/realsense/realsense-viewer.md)
-3. [Python Environments](./docs/processing/python_environments.md)
+3. Python Setup
+    - [Windows](./docs/setup/windows.md)
+    - [Mac OSX](./docs/setup/osx.md)
+    - [Linux](./docs/setup/linux.md)
+    
 
 
 ## Core Scripts
