@@ -29,6 +29,41 @@ pyenv install 3.7
 
 </details>
 
+
+<details>
+<summary><strong>Linux</strong></summary>
+
+The easiest way from my experience is to use <a href="https://github.com/pyenv/pyenv#set-up-your-shell-environment-for-pyenv" target="_blank">**pyenv**</a>. However, the process to install this is a bit different on Linux and Ubuntu-based systems. This part of the documentation is inspired by <a href="https://www.digikey.de/de/maker/tutorials/2024/how-to-manage-multiple-python-installations-on-raspberry-pi" target="_blank">DigiKey</a>.
+
+Firstly, you must install **pyenv** via `apt`:
+
+```bash
+curl https://pyenv.run | bash
+```
+
+This process isn't long, but you must follow an additional step to make sure you can call **pyenv** via your Terminal. 
+
+1. Locate your `~/.bashrc` file, which is usually located at `/home/<username>/.bashrc`.
+2. Add the following lines to the end of the document, and save:
+
+    ```bash
+    export PATH="$HOME/.pyenv/bin:$PATH"
+    export PYENV_ROOT="$HOME/.pyenv"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv virtualenv-init -)"
+    ```
+3. Close your bash terminals and reopen. This causes the bash environment to recognize commands such as `pyenv`.
+
+At this point, you can then install Python3.7 using the following command:
+
+```bash
+pyenv install 3.7
+```
+
+You will face additional barriers, such as missing packages. If you encounter such messages, then just import them via `sudo apt` and re-install the python version again.
+
+</details>
+
 ## Step 2: Setting Up a Virtual Environment
 
 We want to set up a Python3.7 virtual environment, such that we can isolate all package imports and python ops to a setting that works off of Python3.7. The steps to do this are different between Windows and OS X.
@@ -58,7 +93,7 @@ realsense_env/Scripts/activate.ps1
 </details>
 
 <details>
-<summary><strong>Mac OS x</strong></summary>
+<summary><strong>Mac OS X</strong></summary>
 
 We're going with the assumption you used **Homebrew** and **pyenv** to install Python3.7. From that, we need to install an additional package via Homebrew: **pyenv-virtualenv**.
 
@@ -78,6 +113,38 @@ For example, if we wanted to create a virtual environment called `realsense_env`
 ```bash
 pyenv virtualenv 3.7 realsense_env
 pyenv activate realsense_env
+```
+
+</details>
+
+<details>
+<summary><strong>Linux</strong></summary>
+
+We're going with the assumption you used **pyenv** to install Python3.7. From that, we need to install an additional package: **pyenv-virtualenv**.
+
+```bash
+git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+```
+
+After that, you can create and run a new virtual environment using Python3.7 using the following commands:
+
+```bash
+pyenv virtualenv 3.7 <NAME OF ENVIRONMENT>
+pyenv activate <NAME OF ENVIRONMENT>
+```
+
+If you run into an error where you get a message like this:
+
+```
+`pyenv activate' requires Pyenv and Pyenv-Virtualenv to be loaded into your shell.
+Check your shell configuration and Pyenv and Pyenv-Virtualenv installation instructions.
+```
+
+An alternative way to activate your environment is to use the following command:
+
+```bash
+# Don't forget that `.` at the beginning!
+. ${PYENV_ROOT}/versions/<NAME OF ENVIRONMENT>/bin/activate
 ```
 
 </details>
