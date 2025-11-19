@@ -7,6 +7,7 @@ import queue
 import threading
 import argparse
 import pyrealsense2 as rs
+from pynput import keyboard
 
 # ================== #
 # = PRIMITIVES = #
@@ -35,7 +36,23 @@ timestamps = []
 
 stop_event = threading.Event()
 
-  
+
+# ========================= #
+# = KEYBOARD PRESS THREAD = #
+# ========================= #
+
+def on_press(key):
+    try:
+        if key.char == ' ':
+            event_queue.put('SPACE')
+    except AttributeError:
+        if key == keyboard.Key.space:
+            event_queue.put('SPACE')
+        elif key == keyboard.Key.esc:
+            stop_event.set()
+            return False
+
+
 # ================== #
 # = PREVIEW THREAD = #
 # ================== #
@@ -59,16 +76,19 @@ def preview_loop():
         # Render the frame if it is not None
         if frame is not None:
             cv2.imshow("Preview", frame)
+            cv2.waitKey(1)
         
+        """
         # Key registration for spacebar
         key = cv2.waitKey(1) & 0xFF
         if key == 32:
             event_queue.put("SPACE")
-        
+
         # key registration for closing the window
         if key == 27:
             stop_event.set()
             break
+        """
     
     # Destroy the window
     cv2.destroyAllWindows()
@@ -78,7 +98,7 @@ def preview_loop():
 # = RECORDING THREAD = #
 # ==================== #
 
-def record_with_preview(metadata_path, output_path):
+def record_with_preview(metadata_path, output_path, enable_preview):
 
     # Access the global frame
     global latest_frame
@@ -105,12 +125,20 @@ def record_with_preview(metadata_path, output_path):
 
     # Start recording
     pipeline.start(config)
-    print("Recording... Press ESC. to stop, SPACEBAR to mark timestamps")
     start_time = time.time()
 
+    # Start listener for keyboardp resses
+    keyboard_listener = keyboard.Listener(on_press=on_press)
+    keyboard_listener.daemon = True
+    keyboard_listener.start()
+
     # Start preview thread and window
-    preview_thread = threading.Thread(target=preview_loop, daemon=True)
-    preview_thread.start()
+    if enable_preview:
+        preview_thread = threading.Thread(target=preview_loop, daemon=True)
+        preview_thread.start()
+    else:
+        preview_thread = None
+    print(f"Recording... Press ESC. to stop, SPACEBAR to mark timestamps")
 
     # Continue recording until stop event is reached
     try:
@@ -120,7 +148,7 @@ def record_with_preview(metadata_path, output_path):
             frame = frames.get_color_frame() if is_color_frame else frames.get_depth_frame()
 
             # handle if frame is not None
-            if frame is not None:
+            if enable_preview and frame is not None:
                 img = np.asarray(frame.get_data())
                 # Copy latest frame for preview
                 with frame_lock:
@@ -132,15 +160,17 @@ def record_with_preview(metadata_path, output_path):
                 if event == "SPACE":
                     timestamp = time.time() - start_time
                     timestamps.append(timestamp)
-                    print(f"[MAKR] {timestamp:.3f}s")
+                    print(f"[MARK] {timestamp:.3f}s")
     except KeyboardInterrupt:
         print("Stopping...")
     finally:
 
         # Stop everything
         stop_event.set()
-        preview_thread.join()
         pipeline.stop()
+        if preview_thread is not None:
+            preview_thread.join()
+        keyboard_listener.stop()
 
         # Save the timestamps too
         json_path = output_path.replace(".bag", "_timestamps.json")
@@ -159,15 +189,23 @@ def record_with_preview(metadata_path, output_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("input_metadata", type=str, help="The .json file to read")
-    parser.add_argument("output_bag", type=str, help="The output filename of the .bag file")
+    parser.add_argument("input_metadata", 
+                        type=str, 
+                        help="The .json file to read")
+    parser.add_argument("output_bag", 
+                        type=str, 
+                        help="The output filename of the .bag file")
+    parser.add_argument("-p", "--preview",
+                        action="store_true",
+                        help="Enable live OpenCV preview window")
+
     args = parser.parse_args()
 
     # double-check if input_metadata is a valid file
     assert os.path.exists(args.input_metadata), "Metadata file does not exists!"
 
-    # Make the call
-    record_with_preview(args.input_metadata, args.output_bag)
+    # Make the cal
+    record_with_preview(args.input_metadata, args.output_bag, args.preview)
 
 
 

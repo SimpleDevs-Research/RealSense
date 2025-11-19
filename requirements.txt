@@ -1,5 +1,0 @@
-numpy
-Cython
-pandas
-opencv-python
-pyrealsense2

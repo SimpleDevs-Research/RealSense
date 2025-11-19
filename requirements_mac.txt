@@ -3,3 +3,4 @@ Cython
 pandas
 opencv-python
 pyrealsense2-macosx
+pynput

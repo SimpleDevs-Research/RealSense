@@ -1,0 +1,16 @@
+[
+    {
+        "type":"stream.color",
+        "format":"format.bgr8",
+        "width":640,
+        "height":480,
+        "fps":30
+    },
+    {
+        "type":"stream.depth",
+        "format":"format.z16",
+        "width":640,
+        "height":480,
+        "fps":30
+    }
+]
