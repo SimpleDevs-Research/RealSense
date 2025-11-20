@@ -13,4 +13,4 @@ TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 mkdir -p "recordings_ignore"
 
 # --- Run the recording script with timestamped BAG file ---
-python "src/record.py" "configs/depth_color.json" "recordings_ignore/${TIMESTAMP}.bag"
+python "src/record2.py" "configs/depth_color_640x480x30.json" "recordings_ignore" -p
