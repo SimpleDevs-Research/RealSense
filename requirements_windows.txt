@@ -4,3 +4,8 @@ pandas
 opencv-python
 pyrealsense2
 pynput
+scipy
+tqdm
+matplotlib
+open3d
+keyboard

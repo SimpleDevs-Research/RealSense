@@ -4,3 +4,7 @@ pandas
 opencv-python
 pyrealsense2-macosx
 pynput
+scipy
+tqdm
+matplotlib
+open3d
