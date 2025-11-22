@@ -8,3 +8,4 @@ scipy
 tqdm
 matplotlib
 open3d
+keyboard

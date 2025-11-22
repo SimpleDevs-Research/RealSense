@@ -9,3 +9,4 @@ tqdm
 matplotlib
 open3d
 keyboard
+ultralytics
